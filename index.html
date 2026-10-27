@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparatives and Superlatives</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --bg-color: #f7fff7;
+            --text-color: #2f3542;
+            --correct-bg: #d4edda;
+            --correct-border: #28a745;
+            --wrong-bg: #f8d7da;
+            --wrong-border: #dc3545;
+            --disabled-bg: #e9ecef;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+            position: relative;
+            border: 4px dashed var(--secondary-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-top: 0;
+        }
+
+        .name-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            font-size: 1.2em;
+            padding: 10px 15px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.2s;
+            margin: 10px;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #ff5252;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #45b7aa;
+        }
+
+        /* Rule Table */
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: #fff;
+        }
+
+        .rule-table th, .rule-table td {
+            border: 2px solid var(--secondary-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .rule-table th {
+            background-color: #e0f7fa;
+            color: #006064;
+            text-align: center;
+        }
+
+        /* Exercises */
+        .exercise {
+            display: none;
+            margin-bottom: 40px;
+            padding-top: 20px;
+            border-top: 3px dashed #ccc;
+        }
+
+        .exercise.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .exercise.locked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        h2 {
+            color: #0984e3;
+            font-size: 1.4em;
+        }
+
+        /* Ex 1 Table */
+        .ex1-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .ex1-table th, .ex1-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .ex1-table th {
+            background-color: #ffeaa7;
+        }
+
+        .ex1-table input {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        /* Ex 2, 3, 4 Sentences */
+        .sentence {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            line-height: 1.5;
+        }
+
+        .sentence input[type="text"] {
+            width: 150px;
+            padding: 5px;
+            font-size: 1em;
+            margin: 0 5px;
+            border-radius: 5px;
+            border: 1px solid #999;
+        }
+
+        .sentence input.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+        }
+
+        .sentence input.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+        }
+
+        .sentence.locked {
+            color: #888;
+        }
+
+        .sentence.locked input {
+            background-color: var(--disabled-bg);
+            color: #666;
+        }
+
+        /* Feedback animations */
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 4px solid var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        .popup.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Congrats */
+        #congratsScreen {
+            text-align: center;
+            display: none;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #ff9ff3;
+        }
+
+        #congratsScreen h2 {
+            font-size: 2em;
+            color: #e84393;
+        }
+
+        #congratsScreen p {
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .error-text {
+            color: red;
+            font-size: 0.9em;
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <h1>Comparatives & Superlatives</h1>
+        
+        <div class="name-container">
+            <label for="studentName" style="font-size: 1.2em; font-weight: bold;">YOUR NAME:</label><br>
+            <input type="text" id="studentName" placeholder="Type your name here..." autocomplete="off">
+            <div id="nameError" class="error-text">Please enter your name to start!</div>
+        </div>
+
+        <table class="rule-table">
+            <thead>
+                <tr>
+                    <th>Adjective type</th>
+                    <th>Rule</th>
+                    <th>Examples</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Most short adjectives</td>
+                    <td>+ <b>-er</b> / <b>-est</b></td>
+                    <td>slow → slow<b>er</b> → the slow<b>est</b></td>
+                </tr>
+                <tr>
+                    <td>Ending in -e</td>
+                    <td>+ <b>-r</b> / <b>-st</b></td>
+                    <td>nice → nice<b>r</b> → the nice<b>st</b></td>
+                </tr>
+                <tr>
+                    <td>Ending in consonant + y</td>
+                    <td><b>y → i</b> + <b>-er</b> / <b>-est</b></td>
+                    <td>funny → funn<b>ier</b> → the funn<b>iest</b></td>
+                </tr>
+                <tr>
+                    <td>Ending in one vowel + one consonant</td>
+                    <td><b>double consonant</b> + <b>-er</b> / <b>-est</b></td>
+                    <td>big → bi<b>gg</b>er → the bi<b>gg</b>est</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p style="text-align: center; font-size: 1.1em;">
+            <b>Remember:</b> We use <b>than</b> with comparatives and <b>the</b> with superlatives.
+        </p>
+
+        <div style="text-align: center;">
+            <button class="btn" id="startBtn" style="font-size: 1.5em; padding: 15px 50px;">START</button>
+        </div>
+
+        <!-- Exercise 1 -->
+        <div class="exercise" id="ex1">
+            <h2>Exercise 1 of 4. Write the comparative and superlative forms.</h2>
+            <p><i>Example: fast - faster than - the fastest</i></p>
+            <table class="ex1-table">
+                <thead>
+                    <tr>
+                        <th>Adjective</th>
+                        <th>Comparative (with <i>than</i>)</th>
+                        <th>Superlative (with <i>the</i>)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. slow</td>
+                        <td><input type="text" id="ex1-1a"></td>
+                        <td><input type="text" id="ex1-1b"></td>
+                    </tr>
+                    <tr>
+                        <td>2. big</td>
+                        <td><input type="text" id="ex1-2a"></td>
+                        <td><input type="text" id="ex1-2b"></td>
+                    </tr>
+                    <tr>
+                        <td>3. funny</td>
+                        <td><input type="text" id="ex1-3a"></td>
+                        <td><input type="text" id="ex1-3b"></td>
+                    </tr>
+                    <tr>
+                        <td>4. nice</td>
+                        <td><input type="text" id="ex1-4a"></td>
+                        <td><input type="text" id="ex1-4b"></td>
+                    </tr>
+                    <tr>
+                        <td>5. small</td>
+                        <td><input type="text" id="ex1-5a"></td>
+                        <td><input type="text" id="ex1-5b"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center;">
+                <button class="btn" id="checkEx1Btn" onclick="checkEx1()">CHECK</button>
+                <button class="btn btn-secondary" onclick="tryAgain('ex1')" style="display:none;" id="tryAgain-ex1">TRY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise" id="ex2">
+            <h2>Exercise 2 of 4. Complete with the comparative form.</h2>
+            <div class="sentence">1. My bike is <input type="text" id="ex2-1"> (fast) than your bike.</div>
+            <div class="sentence">2. This book is <input type="text" id="ex2-2"> (funny) than that one.</div>
+            <div class="sentence">3. An elephant is <input type="text" id="ex2-3"> (big) than a horse.</div>
+            <div class="sentence">4. My room is <input type="text" id="ex2-4"> (clean) than my brother's room.</div>
+            <div class="sentence">5. Today is <input type="text" id="ex2-5"> (hot) than yesterday.</div>
+            <div style="text-align: center;">
+                <button class="btn" id="checkEx2Btn" onclick="checkEx2()">CHECK</button>
+                <button class="btn btn-secondary" onclick="tryAgain('ex2')" style="display:none;" id="tryAgain-ex2">TRY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise" id="ex3">
+            <h2>Exercise 3 of 4. Complete with the superlative form.</h2>
+            <div class="sentence">1. She is <input type="text" id="ex3-1"> (tall) girl in our class.</div>
+            <div class="sentence">2. This is <input type="text" id="ex3-2"> (cheap) phone in the shop.</div>
+            <div class="sentence">3. My grandpa is <input type="text" id="ex3-3"> (old) person in our family.</div>
+            <div class="sentence">4. It is <input type="text" id="ex3-4"> (cold) day of the year.</div>
+            <div class="sentence">5. This is <input type="text" id="ex3-5"> (easy) question in the test.</div>
+            <div style="text-align: center;">
+                <button class="btn" id="checkEx3Btn" onclick="checkEx3()">CHECK</button>
+                <button class="btn btn-secondary" onclick="tryAgain('ex3')" style="display:none;" id="tryAgain-ex3">TRY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise" id="ex4">
+            <h2>Exercise 4 of 4. Complete with the comparative OR superlative form.</h2>
+            <div class="sentence">1. My dog is <input type="text" id="ex4-1"> (friendly) than my cat.</div>
+            <div class="sentence">2. She is <input type="text" id="ex4-2"> (smart) student in our school.</div>
+            <div class="sentence">3. This bag is <input type="text" id="ex4-3"> (heavy) than that one.</div>
+            <div class="sentence">4. It is <input type="text" id="ex4-4"> (big) shopping centre in our city.</div>
+            <div class="sentence">5. Today is <input type="text" id="ex4-5"> (sunny) than yesterday.</div>
+            <div style="text-align: center;">
+                <button class="btn" id="checkEx4Btn" onclick="checkEx4()">CHECK</button>
+                <button class="btn btn-secondary" onclick="tryAgain('ex4')" style="display:none;" id="tryAgain-ex4">TRY AGAIN</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Congratulations Screen -->
+    <div class="container" id="congratsScreen">
+        <h2>Well done, <span id="finalName"></span>! 🎉</h2>
+        <p>Make a picture of this screen and send it to your teacher!</p>
+        <button class="btn" onclick="startAgain()">START AGAIN</button>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup" id="popup">
+        <p id="popupText"></p>
+        <button class="btn" onclick="closePopup()" style="margin-top: 15px;">OK</button>
+    </div>
+
+    <script>
+        // Correct answers database
+        const answers = {
+            ex1: [
+                ["slower than", "the slowest"],
+                ["bigger than", "the biggest"],
+                ["funnier than", "the funniest"],
+                ["nicer than", "the nicest"],
+                ["smaller than", "the smallest"]
+            ],
+            ex2: ["faster", "funnier", "bigger", "cleaner", "hotter"],
+            ex3: ["the tallest", "the cheapest", "the oldest", "the coldest", "the easiest"],
+            ex4: ["friendlier", "the smartest", "heavier", "the biggest", "sunnier"]
+        };
+
+        // Clean string function: lowercase, remove extra spaces
+        function cleanString(str) {
+            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+        }
+
+        // Init state
+        let state = {
+            name: "",
+            currentEx: 0 // 0 = not started, 1 = ex1, 2 = ex2, 3 = ex3, 4 = ex4, 5 = finished
+        };
+
+        // Load state from localStorage on page load
+        window.onload = function() {
+            const savedState = localStorage.getItem('worksheetState');
+            if (savedState) {
+                state = JSON.parse(savedState);
+                if (state.name) {
+                    document.getElementById('studentName').value = state.name;
+                }
+                if (state.currentEx > 0) {
+                    document.getElementById('startBtn').style.display = 'none';
+                    document.getElementById('studentName').disabled = true;
+                    
+                    // Unlock corresponding exercise
+                    for (let i = 1; i < state.currentEx; i++) {
+                        lockExercise('ex' + i);
+                    }
+                    
+                    if (state.currentEx === 5) {
+                        showCongrats();
+                    } else {
+                        document.getElementById('ex' + state.currentEx).classList.add('active');
+                    }
+                }
+            }
+        };
+
+        // Start button logic
+        document.getElementById('startBtn').addEventListener('click', function() {
+            const nameInput = document.getElementById('studentName').value.trim();
+            if (nameInput === "") {
+                document.getElementById('nameError').style.display = 'block';
+                document.getElementById('studentName').classList.add('shake');
+                setTimeout(() => document.getElementById('studentName').classList.remove('shake'), 500);
+                return;
+            }
+            
+            document.getElementById('nameError').style.display = 'none';
+            document.getElementById('studentName').disabled = true;
+            this.style.display = 'none';
+            
+            state.name = nameInput;
+            state.currentEx = 1;
+            saveState();
+            
+            document.getElementById('ex1').classList.add('active');
+        });
+
+        function saveState() {
+            localStorage.setItem('worksheetState', JSON.stringify(state));
+        }
+
+        function lockExercise(exId) {
+            const ex = document.getElementById(exId);
+            const inputs = ex.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.disabled = true;
+                input.classList.remove('correct', 'wrong');
+            });
+            
+            const btnCheck = ex.querySelector('.btn:not(.btn-secondary)');
+            const btnTry = ex.querySelector('.btn-secondary');
+            
+            if(btnCheck) btnCheck.style.display = 'none';
+            if(btnTry) btnTry.style.display = 'none';
+            
+            ex.classList.add('locked');
+        }
+
+        function tryAgain(exId) {
+            const ex = document.getElementById(exId);
+            const inputs = ex.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.classList.remove('correct', 'wrong');
+            });
+            document.getElementById('tryAgain-' + exId).style.display = 'none';
+            
+            const btnCheck = ex.querySelector('.btn:not(.btn-secondary)');
+            if(btnCheck) btnCheck.style.display = 'inline-block';
+        }
+
+        function showPopup(message) {
+            document.getElementById('popupText').innerHTML = message;
+            document.getElementById('popup').classList.add('show');
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('show');
+        }
+
+        // Check Exercise 1
+        function checkEx1() {
+            let score = 0;
+            let hasTheMissing = false;
+            let hasThanMissing = false;
+
+            for (let i = 1; i <= 5; i++) {
+                const inputA = document.getElementById('ex1-' + i + 'a');
+                const inputB = document.getElementById('ex1-' + i + 'b');
+                
+                const valA = cleanString(inputA.value);
+                const valB = cleanString(inputB.value);
+                
+                const correctA = cleanString(answers.ex1[i-1][0]);
+                const correctB = cleanString(answers.ex1[i-1][1]);
+
+                if (valA === correctA) {
+                    inputA.classList.add('correct');
+                    inputA.classList.remove('wrong');
+                } else {
+                    inputA.classList.add('wrong');
+                    inputA.classList.remove('correct');
+                    if (valA === correctA.replace(' than', '')) hasThanMissing = true;
+                }
+
+                if (valB === correctB) {
+                    inputB.classList.add('correct');
+                    inputB.classList.remove('wrong');
+                } else {
+                    inputB.classList.add('wrong');
+                    inputB.classList.remove('correct');
+                    if (valB === correctB.replace('the ', '')) hasTheMissing = true;
+                }
+
+                if (valA === correctA && valB === correctB) {
+                    score++;
+                }
+            }
+
+            handleExerciseResult(score, 5, 'ex1', hasTheMissing, hasThanMissing);
+        }
+
+        // Check Exercise 2, 3, 4
+        function checkEx(exNum) {
+            const exId = 'ex' + exNum;
+            const correctArr = answers[exId];
+            let score = 0;
+            let hasTheMissing = false;
+
+            for (let i = 1; i <= 5; i++) {
+                const input = document.getElementById(`${exId}-${i}`);
+                if(!input) continue;
+
+                const val = cleanString(input.value);
+                const correct = cleanString(correctArr[i-1]);
+
+                if (val === correct) {
+                    input.classList.add('correct');
+                    input.classList.remove('wrong');
+                    score++;
+                } else {
+                    input.classList.add('wrong');
+                    input.classList.remove('correct');
+                    // Check if they forgot 'the' for ex3 or ex4
+                    if ((exNum === 3 || exNum === 4) && val === correct.replace('the ', '')) {
+                        hasTheMissing = true;
+                    }
+                }
+            }
+
+            handleExerciseResult(score, 5, exId, hasTheMissing, false);
+        }
+
+        function checkEx2() { checkEx(2); }
+        function checkEx3() { checkEx(3); }
+        function checkEx4() { checkEx(4); }
+
+        function handleExerciseResult(score, total, exId, hasTheMissing, hasThanMissing) {
+            if (hasThanMissing) {
+                showPopup("Don't forget to use <b>'than'</b> for comparatives! (e.g., bigger <b>than</b>)");
+                return;
+            }
+            if (hasTheMissing) {
+                showPopup("Don't forget to use <b>'the'</b> for superlatives! (e.g., <b>the</b> biggest)");
+                return;
+            }
+
+            const percentage = (score / total) * 100;
+            const exDiv = document.getElementById(exId);
+
+            if (percentage >= 80) {
+                // Success
+                const btnCheck = exDiv.querySelector('.btn:not(.btn-secondary)');
+                if(btnCheck) btnCheck.style.display = 'none'; 
+                
+                const inputs = exDiv.querySelectorAll('input');
+                inputs.forEach(input => input.disabled = true);
+                exDiv.classList.add('locked');
+
+                state.currentEx++;
+                saveState();
+
+                if (state.currentEx === 5) {
+                    setTimeout(showCongrats, 1000);
+                } else {
+                    setTimeout(() => {
+                        document.getElementById('ex' + state.currentEx).classList.add('active');
+                        // Scroll to next exercise smoothly
+                        document.getElementById('ex' + state.currentEx).scrollIntoView({behavior: 'smooth'});
+                    }, 1000);
+                }
+            } else {
+                // Fail
+                const btnCheck = exDiv.querySelector('.btn:not(.btn-secondary)');
+                if(btnCheck) btnCheck.style.display = 'none'; 
+                
+                document.getElementById('tryAgain-' + exId).style.display = 'inline-block'; 
+            }
+        }
+
+        function showCongrats() {
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('congratsScreen').style.display = 'block';
+            document.getElementById('finalName').textContent = state.name;
+        }
+
+        function startAgain() {
+            localStorage.removeItem('worksheetState');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
